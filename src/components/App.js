@@ -2,7 +2,7 @@ import React,{useState} from "react"
 import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
 import TaskList from "./TaskList";
-import { v4 as uuid } from "uuid"
+
 
 import { CATEGORIES, TASKS } from "../data";
 
@@ -12,43 +12,48 @@ console.log({ CATEGORIES, TASKS });
 
 function App() {
 
-   //generating an id 
-  const [tasksWithIds , setTasksWithIds]=useState(
-     TASKS.map((task) => ({...task, id:uuid()}))
-   )
+    const[tasks,setTasks]=useState(TASKS)
+    const[selectedCategory,setSelectedCategory]=useState('All')
 
-  // for filtering tasks
-  const[selectCategory, setSelectCategory]= useState('All')
-  
 
-  // handling the delete button
-   function handleDelete(id){
+    //delete button 
+  function handleDelete(deletedTasks){
 
-     setTasksWithIds(tasksWithIds.filter((task) => task.id !== id))
-   }
-  
-  // filtering tasks at button
-  const filteredTasks = tasksWithIds.filter((task) => 
-    selectCategory === "All" || task.category === selectCategory
+      setTasks(tasks.filter((task) => task!== deletedTasks))
+    }
+
+// ....................................................................
+    // select button category filter
+    function handleCategoryClick(category){
+    
+      setSelectedCategory(category)
+      
+    }
+
+      // Filter tasks based on the selected category
+  const filteredTasks = tasks.filter(task =>
+    selectedCategory === 'All' || task.category === selectedCategory
   );
 
-  
+  console.log(filteredTasks)
+// ..........................................................................
 
-  //on submitting button
-  function handleTaskItemSubmit(newTaskItem){
-    setTasksWithIds([...tasksWithIds,newTaskItem])
 
-    console.log({newTaskItem})
+function handleTaskFormSubmit(newTask) {
+  setTasks([...tasks, newTask]);
+}
 
-  }  
-  
+
 
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter CATEGORIES={CATEGORIES} selectCategory={setSelectCategory}/>
-      <NewTaskForm CATEGORIES={CATEGORIES} onTaskFormSubmit={handleTaskItemSubmit} />
-      <TaskList tasks={tasksWithIds} onDelete={handleDelete} />
+      <CategoryFilter  categories={CATEGORIES} onCategorySelect={handleCategoryClick} selectedCategory={selectedCategory}/>
+
+      <NewTaskForm categories={CATEGORIES} onTaskFormSubmit={handleTaskFormSubmit}/>
+      {console.log(filteredTasks)}
+
+      <TaskList tasks={filteredTasks} onDelete={handleDelete}/>
     </div>
   );
 }

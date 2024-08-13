@@ -1,52 +1,47 @@
-import React, {useState} from "react"
-import { v4 as uuid } from "uuid"
+import { useState } from "react";
 
+function NewTaskForm({categories,onTaskFormSubmit}) {
 
-function NewTaskForm({onTaskFormSubmit}) {
+  const[taskCategory,setTaskCategory]=useState('Code')
+  const[taskText, setTaskText]=useState('')
 
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState("Code")
+  console.log({categories})
 
-  function handleSubmit(event){
-    event.preventDefault()
-    onTaskFormSubmit({
-      id:uuid(),
-      name,
-      category
-    })
-
-  }
-
-  // handling onchange on select
+//  select......................................................
   function handleChange(event){
 
-    setCategory(event.target.value)
-   }
-
-
-  function handleNameChange(event){
-
-    setName(event.target.value)
-    console.log(event.target.value)
+    setTaskCategory(event.target.value)
   }
+
+  //onsubmit
+  function handleSubmit(event){
+      event.preventDefault()
+
+      const newTask = { text: taskText, category: taskCategory };
+      onTaskFormSubmit(newTask);
+
+      // reseting
+      setTaskText('');
+      setTaskCategory('Code'); 
+
+  } 
 
 
   return (
-    <form className="new-task-form" onSubmit={handleSubmit}>
-
+    <form onSubmit={handleSubmit} className="new-task-form">
       <label>
         Details
-        <input type="text" name="name" value={name} onChange={handleNameChange}/>
+        <input type="text" name={taskText} onChange={(event) =>setTaskText(event.target.value)}/>
       </label>
-
       <label>
         Category
-        <select name="category" onChange={handleChange}>
-          {/* render <option> elements for each category here */}
-        <option value="Code">Code</option>
-        <option value="Food">Food</option>
-        <option value="Money">Money</option>
-        <option value="Misc">Misc</option>
+
+        <select  onChange={handleChange} name="category">
+           <option value="Code">Code</option>
+           <option value="Food">Food</option>
+           <option value="Money">Money</option>
+           <option value="Misc">Misc</option>
+
         </select>
       </label>
       <input type="submit" value="Add task" />
